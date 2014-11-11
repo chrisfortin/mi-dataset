@@ -3,6 +3,7 @@
 import inspect, os
 import sys, traceback
 
+# a function to covert underbar delimited strings to the associated camel case version
 def ubar_to_camel(s):
     # make the first char upper case
     s = s[0].upper() + s[1:]
@@ -14,19 +15,20 @@ def ubar_to_camel(s):
     return s
 
 
+# set base path based upon the location of this file, which should be in mi/dataset
 basePath = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))  + '/driver'
-#print 'basePath is ' + basePath
 
+# check to make sure we see the driver directory.  If not, this script is installed in the incorrect place.
 if not os.path.exists(basePath):
     print 'error: driver directory not found'
     sys.exit(0)
 
 
-#
+# ask the user for the parameters we need to create the stub driver
 print "create_driver:  This script will ask for driver identification items,"
-print "                 and then build a template driver file, creating the"
-print "                 target directories if necessary"
-
+print "                and then build a template driver file, creating the"
+print "                target directories if necessary"
+print""
 
 inst_name = raw_input('Enter Instrument Name ( ex: flntu_x ): ')
 plat_name = raw_input('Enter Instrument Name ( ex: mmp_cds ): ')
@@ -38,15 +40,12 @@ auth_name = raw_input('Enter Author Name: ')
 
 # gather the platform and instrument into an underbar delimited string
 ubar_name = (inst_name + '_' + plat_name).lower()
-#print 'underbar name is ' + ubar_name
 
 # convert above to camel case
 camel_case_name = ubar_to_camel(ubar_name)
-#print 'camelcase name is ' + camel_case
 
 # name a camel case version of the driver name
 camel_case_driver_name = ubar_to_camel(driver_name)
-#print camel_case_driver_name
 
 # check/create the top level instrument directory
 tld_dir = basePath + '/' + inst_name
@@ -63,16 +62,16 @@ else:
         print "No platform directory found, creating " + tgt_dir
         os.makedirs(tgt_dir)
 
-# now open the target driver file.  Don't clobber.
+# Look for the target driver file.  Don't clobber.
 tgt_filename = tgt_dir + '/' +  driver_file_name
 if os.path.exists(tgt_filename):
     print 'error: driver file ' + tgt_filename + ' already exists'
     sys.exit(0)
 
-
+# open the target file
 f = open(tgt_filename,'w+')
 
-
+# emit globbed lines into the stub driver.
 f.write('#!/usr/bin/env python' + '\n')
 f.write('' + '\n')
 f.write('"""' + '\n')
